@@ -1,0 +1,41 @@
+name: Test Python Architectures via setup-python
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-python-architectures:
+    runs-on: macos-14  # M1 runner
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12 using actions/setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Confirm Python binary location
+        run: |
+          echo "Python path: $(which python3)"
+          echo "PYTHON_PATH=$(which python3)" >> $GITHUB_ENV
+
+      - name: Check Python binary architecture
+        run: |
+          echo "Available slices in Python binary:"
+          lipo -archs $(which python3)
+
+      - name: Create ARM64 virtual environment
+        run: |
+          ${{ env.PYTHON_PATH }} -m venv venv-arm
+          source venv-arm/bin/activate
+          echo "ARM venv active:"
+          python -c "import platform; print('Running as:', platform.machine())"
+
+      - name: Create x86_64 virtual environment via Rosetta
+        run: |
+          arch -x86_64 ${{ env.PYTHON_PATH }} -m venv venv-x86
+          source venv-x86/bin/activate
+          echo "x86 venv active:"
+          python -c "import platform; print('Running as:', platform.machine())"
