@@ -1,20 +1,20 @@
-name: Test Python Architectures via setup-python
+name: Test Python Architectures Intel
 
 on:
   workflow_dispatch:
 
 jobs:
   test-python-architectures:
-    runs-on: macos-14  # M1 runner
+    runs-on: macos-13  # Intel runner hopefully
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python 3.12 using actions/setup-python
+      - name: Setup Python 3.11 using actions/setup-python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
 
       - name: Confirm Python binary location
         run: |
